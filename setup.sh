@@ -214,5 +214,12 @@ if ! grep -q "EDITOR=hx" "$HOME/.zprofile"; then
     export EDITOR=hx
 fi
 
+# Set Helix as default visual
+if ! grep -q "VISUAL=hx" "$HOME/.zprofile"; then
+    echo "Setting Helix as default visual..."
+    echo "export VISUAL=hx" >> "$HOME/.zprofile"
+    export VISUAL=hx
+fi
+
 source "$HOME/.zprofile"
 echo "Setup script completed!"
