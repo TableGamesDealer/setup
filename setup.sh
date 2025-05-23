@@ -57,6 +57,12 @@ if [ -d "$SETUP_DIR/.git" ] && git -C "$SETUP_DIR" rev-parse --verify main >/dev
     cd -
 fi
 
+# Install GitHub CLI via Brew
+if ! command -v gh &> /dev/null; then
+    echo "Installing gh via rustup..."
+    brew install gh
+fi
+
 # Install Rust via rustup
 if ! command -v rustc &> /dev/null; then
     echo "Installing Rust via rustup..."
