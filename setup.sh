@@ -41,6 +41,13 @@ if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
     echo "=== SSH Setup Complete ==="
 fi
 
+# Configure Git user settings
+if ! git config --global user.email &> /dev/null; then
+    echo "Configuring Git user settings..."
+    git config --global user.name "TableGamesDealer"
+    git config --global user.email "$git_email"
+fi
+
 # Update the setup repository if it has a valid Git history
 SETUP_DIR="$HOME/setup"
 if [ -d "$SETUP_DIR/.git" ] && git -C "$SETUP_DIR" rev-parse --verify main >/dev/null 2>&1; then
@@ -198,13 +205,6 @@ if ! grep -q "EDITOR=hx" "$HOME/.zprofile"; then
     echo "Setting Helix as default editor..."
     echo "export EDITOR=hx" >> "$HOME/.zprofile"
     export EDITOR=hx
-fi
-
-# Configure Git user settings
-if ! git config --global user.email &> /dev/null; then
-    echo "Configuring Git user settings..."
-    git config --global user.name "TableGamesDealer"
-    git config --global user.email "your.email@example.com"
 fi
 
 source "$HOME/.zprofile"
