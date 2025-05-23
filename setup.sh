@@ -12,9 +12,9 @@ fi
 if ! command -v "/opt/homebrew/bin/git" &> /dev/null; then
     echo "Installing Git..."
     brew install git
-    if ! grep -q "/opt/homebrew/opt/git/bin" "$HOME/.zprofile"; then
-        echo "export PATH=\"/opt/homebrew/opt/git/bin:\$PATH\"" >> "$HOME/.zprofile"
-        export PATH="/opt/homebrew/opt/git/bin:$PATH"
+    if ! grep -q "/opt/homebrew/bin" "$HOME/.zprofile"; then
+        echo "export PATH=\"/opt/homebrew/bin:\$PATH\"" >> "$HOME/.zprofile"
+        export PATH="/opt/homebrew/bin:$PATH"
     fi
 fi
 
@@ -41,9 +41,9 @@ if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
     echo "=== SSH Setup Complete ==="
 fi
 
-# Update the setup repository
+# Update the setup repository if it has a valid Git history
 SETUP_DIR="$HOME/setup"
-if [ -d "$SETUP_DIR/.git" ]; then
+if [ -d "$SETUP_DIR/.git" ] && git -C "$SETUP_DIR" rev-parse --verify main >/dev/null 2>&1; then
     echo "Updating setup repository..."
     cd "$SETUP_DIR"
     git pull origin main
@@ -118,7 +118,7 @@ fi
 # Install Bash LSP if not installed
 if ! command -v bash-language-server &> /dev/null; then
     echo "Installing Bash LSP by brew..."
-    brew install --cask bash-language-server
+    brew install bash-language-server
 fi
 
 # Install yazi via cargo
@@ -198,6 +198,13 @@ if ! grep -q "EDITOR=hx" "$HOME/.zprofile"; then
     echo "Setting Helix as default editor..."
     echo "export EDITOR=hx" >> "$HOME/.zprofile"
     export EDITOR=hx
+fi
+
+# Configure Git user settings
+if ! git config --global user.email &> /dev/null; then
+    echo "Configuring Git user settings..."
+    git config --global user.name "TableGamesDealer"
+    git config --global user.email "your.email@example.com"
 fi
 
 source "$HOME/.zprofile"
