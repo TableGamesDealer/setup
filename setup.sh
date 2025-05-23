@@ -72,7 +72,7 @@ fi
 
 
 # Install Cargo-Update
-if ! command -v cargo install-update &> /dev/null; then
+if ! command -v cargo-install-update &> /dev/null; then
     echo "Installing Cargo-Update via Cargo"
     cargo install cargo-update
 fi
