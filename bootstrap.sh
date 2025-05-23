@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Clone the setup repository and run the setup script
-REPO_URL="git@github.com:TableGamesDealer/setup.git"
+REPO_URL="https://github.com/TableGamesDealer/setup.git"
 SETUP_DIR="$HOME/setup"
 SCRIPT_NAME="setup.sh"
 
