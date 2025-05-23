@@ -226,6 +226,8 @@ if ! grep -q "VISUAL=hx" "$HOME/.zprofile"; then
     echo "export VISUAL=hx" >> "$HOME/.zprofile"
     export VISUAL=hx
 fi
+echo "Running update:"
+sh update.sh
 
 source "$HOME/.zprofile"
 echo "Setup script completed!"
