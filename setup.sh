@@ -73,7 +73,7 @@ fi
 # Install Rust LSP via rustup
 if ! command -v rust-analyzer &> /dev/null; then
     echo "Installing Rust LSP via rustup..."
-    rustup component add rust-analyzer --toolchain stable-aarch64-apple-darwin
+    rustup component add rust-analyzer clippy rust-docs
 fi
 
 
