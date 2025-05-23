@@ -70,6 +70,13 @@ if ! command -v rust-analyzer &> /dev/null; then
     rustup component add rust-analyzer --toolchain stable-aarch64-apple-darwin
 fi
 
+
+# Install Cargo-Update
+if ! command -v cargo install-update &> /dev/null; then
+    echo "Installing Cargo-Update via Cargo"
+    cargo install cargo-update
+fi
+
 # Install cmake if not installed (required for some cargo packages like gitui)
 if ! command -v cmake &> /dev/null; then
     echo "Installing cmake..."
