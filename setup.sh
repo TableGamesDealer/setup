@@ -57,10 +57,82 @@ if [ -d "$SETUP_DIR/.git" ] && git -C "$SETUP_DIR" rev-parse --verify main >/dev
     cd -
 fi
 
-# Install GitHub CLI via Brew
+# Install GitHub CLI via Brew and configure SSH authentication
 if ! command -v gh &> /dev/null; then
-    echo "Installing gh via rustup..."
+    echo "Installing GitHub CLI..."
     brew install gh
+fi
+
+# Check if gh is authenticated, configure SSH if not
+if ! gh auth status &> /dev/null; then
+    echo "=== Setting up GitHub CLI authentication with existing SSH key ==="
+    if [ -f "$HOME/.ssh/id_ed25519" ]; then
+        echo "Using existing SSH key for GitHub CLI authentication..."
+        # Ensure the SSH agent is running and key is added
+        eval "$(ssh-agent -s)"
+        ssh-add "$HOME/.ssh/id_ed25519" &> /dev/null
+        # Verify SSH key is accessible
+        echo "Verifying SSH key with GitHub..."
+        if ssh -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
+            echo "SSH key is valid for GitHub."
+            # Perform initial GitHub CLI authentication
+            echo "Performing initial GitHub CLI authentication..."
+            echo "Please follow the prompts to authenticate (select 'GitHub.com', 'SSH' protocol, and 'Login with a web browser' for simplicity)."
+            gh auth login --hostname github.com --git-protocol ssh
+            if gh auth status &> /dev/null; then
+                echo "Initial GitHub CLI authentication successful."
+                # Attempt to add SSH key to GitHub (will skip if already exists)
+                echo "Ensuring SSH key is added to GitHub for CLI..."
+                gh ssh-key add "$HOME/.ssh/id_ed25519.pub" --title "Mac-Setup-Key-$(date +%F)" --type authentication || echo "SSH key already exists or addition failed (continuing)."
+                # Set SSH as the preferred protocol
+                gh config set git_protocol ssh
+                echo "GitHub CLI configured to use SSH."
+            else
+                echo "Initial GitHub CLI authentication failed."
+                echo "Please manually authenticate with 'gh auth login' or set GH_TOKEN."
+                echo "To set GH_TOKEN, create a token at https://github.com/settings/tokens with 'repo' and 'admin:public_key' scopes."
+                echo "Then run: export GH_TOKEN=your_token"
+                exit 1
+            fi
+        else
+            echo "SSH key verification failed. Check if the key is added to GitHub: https://github.com/settings/keys"
+            echo "Current SSH public key:"
+            echo "---------------------"
+            cat "$HOME/.ssh/id_ed25519.pub"
+            echo "---------------------"
+            echo "After adding the key to GitHub, press Enter to retry authentication."
+            read -p ""
+            if ssh -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
+                echo "SSH key is now valid. Performing initial GitHub CLI authentication..."
+                gh auth login --hostname github.com --git-protocol ssh
+                if gh auth status &> /dev/null; then
+                    echo "Initial GitHub CLI authentication successful."
+                    echo "Ensuring SSH key is added to GitHub for CLI..."
+                    gh ssh-key add "$HOME/.ssh/id_ed25519.pub" --title "Mac-Setup-Key-$(date +%F)" --type authentication || echo "SSH key already exists or addition failed (continuing)."
+                    gh config set git_protocol ssh
+                    echo "GitHub CLI configured to use SSH."
+                else
+                    echo "Initial GitHub CLI authentication failed."
+                    echo "Please manually authenticate with 'gh auth login' or set GH_TOKEN."
+                    exit 1
+                fi
+            else
+                echo "SSH authentication still failed. Please manually authenticate with 'gh auth login'."
+                exit 1
+            fi
+        fi
+    else
+        echo "No SSH key found. Running 'gh auth login' for interactive authentication..."
+        gh auth login
+        if gh auth status &> /dev/null; then
+            echo "GitHub CLI authentication successful."
+        else
+            echo "GitHub CLI authentication failed."
+            echo "Please manually authenticate with 'gh auth login'."
+            exit 1
+        fi
+    fi
+    echo "=== GitHub CLI Setup Complete ==="
 fi
 
 # Install Rust via rustup
@@ -75,7 +147,6 @@ if ! command -v rust-analyzer &> /dev/null; then
     echo "Installing Rust LSP via rustup..."
     rustup component add rust-analyzer clippy rust-docs
 fi
-
 
 # Install Cargo-Update
 if ! command -v cargo-install-update &> /dev/null; then
@@ -99,7 +170,7 @@ if ! command -v "/opt/homebrew/opt/llvm/bin/clangd" &> /dev/null; then
     fi
 fi
 
-# Install WezTerm if not installed
+# Install WezTerm if not installed Pricing
 if ! command -v wezterm &> /dev/null; then
     echo "Installing WezTerm by brew..."
     brew install --cask wezterm
@@ -120,7 +191,7 @@ fi
 # Install Taplo if not installed
 if ! command -v taplo &> /dev/null; then
     echo "Installing Taplo by cargo..."
-    cargo install taplo-cli --locked
+    cargo install taplo-cli --locked --features lsp
 fi
 
 # Install Lua if not installed
@@ -226,6 +297,7 @@ if ! grep -q "VISUAL=hx" "$HOME/.zprofile"; then
     echo "export VISUAL=hx" >> "$HOME/.zprofile"
     export VISUAL=hx
 fi
+
 echo "Running update:"
 sh update.sh
 
