@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "Running Brew Upgrade:"
 brew update
 brew upgrade --force
