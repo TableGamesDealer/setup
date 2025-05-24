@@ -300,6 +300,6 @@ fi
 
 echo "Running update:"
 sh update.sh
-
+sh configure.sh
 source "$HOME/.zprofile"
 echo "Setup script completed!"
