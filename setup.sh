@@ -154,6 +154,18 @@ if ! command -v cargo-install-update &> /dev/null; then
     cargo install cargo-update
 fi
 
+# Install Cargo-Audit
+if ! command -v cargo-audit &> /dev/null; then
+    echo "Installing cargo-audit..."
+    cargo install cargo-audit --locked
+fi
+
+# Install Cargo-Deny
+if ! command -v cargo-deny &> /dev/null; then
+    echo "Installing cargo-deny..."
+    cargo install cargo-deny --locked
+fi
+
 # Install cmake if not installed (required for some cargo packages like gitui)
 if ! command -v cmake &> /dev/null; then
     echo "Installing cmake..."
@@ -260,6 +272,12 @@ if ! command -v gitui &> /dev/null; then
     cargo install gitui --locked
 fi
 
+# Install bottom via cargo
+if ! command -v btm &> /dev/null; then
+    echo "Installing bottom..."
+    cargo install btm --locked
+fi
+
 # Install markdown-oxide via cargo
 if ! command -v markdown-oxide &> /dev/null; then
     echo "Installing markdown-oxide..."
@@ -300,6 +318,7 @@ fi
 
 echo "Running update:"
 sh update.sh
+echo "Configuring configs:"
 sh configure.sh
 source "$HOME/.zprofile"
 echo "Setup script completed!"
