@@ -8,9 +8,10 @@ CONFIG_REPO_URL="git@github.com:TableGamesDealer/.config.git"
 CONFIG_DIR="$HOME/.config"
 REMOTE_NAME="main"
 CONFIG_FILES=(
-    "home/wezterm.lua:wezterm.lua"
+    "home/wezterm.lua:.wezterm.lua"
     "home/zprofile:.zprofile"
     "home/zshrc:.zshrc"
+    "home/gitconfig:.gitconfig"
 )
 
 # Function to check if a command exists
