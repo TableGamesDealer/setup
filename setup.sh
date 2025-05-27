@@ -278,6 +278,12 @@ if ! command -v btm &> /dev/null; then
     cargo install btm --locked
 fi
 
+# Install presenterm via cargo
+if ! command -v btm &> /dev/null; then
+    echo "Installing presenterm..."
+    cargo install presenterm --locked
+fi
+
 # Install markdown-oxide via cargo
 if ! command -v markdown-oxide &> /dev/null; then
     echo "Installing markdown-oxide..."
