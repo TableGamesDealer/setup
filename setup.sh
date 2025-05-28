@@ -275,11 +275,11 @@ fi
 # Install bottom via cargo
 if ! command -v btm &> /dev/null; then
     echo "Installing bottom..."
-    cargo install btm --locked
+    cargo install bottom --locked
 fi
 
 # Install presenterm via cargo
-if ! command -v btm &> /dev/null; then
+if ! command -v presenterm &> /dev/null; then
     echo "Installing presenterm..."
     cargo install presenterm --locked
 fi
